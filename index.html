@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ARV Orçamentos</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- LEFT -->
+    <div class="editor-side">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+
+            <div class="top-left">
+                <div class="menu-btn">☰</div>
+
+                <div>
+                    <h1>
+                        Novo <span>Orçamento</span>
+                    </h1>
+
+                    <p>
+                        Sistema premium ARV Construção Civil
+                    </p>
+                </div>
+            </div>
+
+            <div class="logo">
+                <img src="logo.png" alt="">
+            </div>
+
+        </header>
+
+        <!-- EMPRESA -->
+        <section class="card">
+
+            <h2>DADOS DA EMPRESA</h2>
+
+            <div class="grid-2">
+                <input id="emp_cnpj" placeholder="CNPJ">
+                <input id="emp_tel" placeholder="Telefone">
+            </div>
+
+            <input id="emp_endereco" placeholder="Endereço">
+
+            <input id="emp_email" placeholder="E-mail">
+
+            <div class="grid-2">
+                <input id="orc_numero" placeholder="Nº orçamento">
+
+                <input id="orc_validade" placeholder="Validade">
+            </div>
+
+        </section>
+
+        <!-- CLIENTE -->
+        <section class="card">
+
+            <h2>DADOS DO CLIENTE</h2>
+
+            <input id="cliente" placeholder="Nome do cliente">
+
+            <input id="endereco" placeholder="Endereço">
+
+            <input id="telefone" placeholder="Telefone">
+
+        </section>
+
+        <!-- SERVIÇOS -->
+        <section class="card">
+
+            <div class="card-header">
+
+                <h2>SERVIÇOS</h2>
+
+                <button onclick="addService()">
+                    + Adicionar
+                </button>
+
+            </div>
+
+            <table id="servicesTable">
+
+                <thead>
+                    <tr>
+                        <th>Serviço</th>
+                        <th>Descrição</th>
+                        <th>Qtd</th>
+                        <th>Valor</th>
+                        <th>Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody></tbody>
+
+            </table>
+
+        </section>
+
+        <!-- MATERIAIS -->
+        <section class="card">
+
+            <div class="card-header">
+
+                <h2>MATERIAIS</h2>
+
+                <button onclick="addMaterial()">
+                    + Adicionar
+                </button>
+
+            </div>
+
+            <table id="materialsTable">
+
+                <thead>
+                    <tr>
+                        <th>Material</th>
+                        <th>Descrição</th>
+                        <th>Qtd</th>
+                        <th>Valor</th>
+                        <th>Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody></tbody>
+
+            </table>
+
+        </section>
+
+        <!-- OBS -->
+        <section class="card">
+
+            <h2>INFORMAÇÕES</h2>
+
+            <input
+            id="pagamento"
+            placeholder="Forma de pagamento">
+
+            <textarea
+            id="obs"
+            placeholder="Observações"></textarea>
+
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="footer-card">
+
+            <div class="total-box">
+
+                <span>
+                    Valor Total
+                </span>
+
+                <h1 id="totalValue">
+                    R$ 0,00
+                </h1>
+
+            </div>
+
+            <div class="actions">
+
+                <button
+                class="clear"
+                onclick="clearAll()">
+
+                    Limpar
+
+                </button>
+
+                <button
+                class="pdf"
+                onclick="generatePDF()">
+
+                    Gerar PDF
+
+                </button>
+
+            </div>
+
+        </footer>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="preview-side">
+
+        <div class="pdf-doc" id="pdfDoc">
+
+            <!-- HEADER -->
+            <div class="pdf-header">
+
+                <div class="logo-area">
+                    <img src="logo.png">
+                </div>
+
+                <div class="title-area">
+
+                    <h1>ORÇAMENTO</h1>
+
+                    <div
+                    class="num"
+                    id="pdf_num">
+
+                        Nº 000001
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- EMPRESA -->
+            <div class="pdf-empresa">
+
+                <div class="info">
+
+                    <strong>
+                        ARV CONSTRUÇÃO CIVIL
+                    </strong>
+
+                    <p id="pdf_cnpj"></p>
+
+                    <p id="pdf_emp_end"></p>
+
+                    <p id="pdf_emp_tel"></p>
+
+                    <p id="pdf_emp_email"></p>
+
+                </div>
+
+                <div class="datas">
+
+                    <table>
+
+                        <tr>
+                            <td>Data:</td>
+                            <td id="pdf_data"></td>
+                        </tr>
+
+                        <tr>
+                            <td>Validade:</td>
+                            <td id="pdf_validade"></td>
+                        </tr>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+            <!-- CLIENTE -->
+            <div class="pdf-section-title">
+                DADOS DO CLIENTE
+            </div>
+
+            <div class="pdf-cliente">
+
+                <p>
+                    <span>Cliente:</span>
+                    <span id="pdf_cliente"></span>
+                </p>
+
+                <p>
+                    <span>Endereço:</span>
+                    <span id="pdf_end"></span>
+                </p>
+
+                <p>
+                    <span>Telefone:</span>
+                    <span id="pdf_tel"></span>
+                </p>
+
+            </div>
+
+            <!-- SERVIÇOS -->
+            <div class="pdf-section-title">
+                SERVIÇOS
+            </div>
+
+            <table class="pdf-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Item</th>
+                        <th>Serviço</th>
+                        <th>Descrição</th>
+                        <th class="right">Qtd</th>
+                        <th class="right">Valor</th>
+                        <th class="right">Total</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="pdf_servicos"></tbody>
+
+            </table>
+
+            <!-- MATERIAIS -->
+            <div class="pdf-section-title">
+                MATERIAIS
+            </div>
+
+            <table class="pdf-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Item</th>
+                        <th>Material</th>
+                        <th>Descrição</th>
+                        <th class="right">Qtd</th>
+                        <th class="right">Valor</th>
+                        <th class="right">Total</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="pdf_materiais"></tbody>
+
+            </table>
+
+            <!-- TOTAL -->
+            <div class="pdf-grand-total">
+
+                <span class="label">
+                    VALOR TOTAL
+                </span>
+
+                <span
+                class="value"
+                id="pdf_grand_total">
+
+                    R$ 0,00
+
+                </span>
+
+            </div>
+
+            <!-- OBS -->
+            <div class="pdf-obs-grid">
+
+                <div>
+
+                    <div class="pdf-section-title">
+                        PAGAMENTO
+                    </div>
+
+                    <div class="pdf-obs-box">
+
+                        <p id="pdf_pagamento"></p>
+
+                    </div>
+
+                </div>
+
+                <div>
+
+                    <div class="pdf-section-title">
+                        OBSERVAÇÕES
+                    </div>
+
+                    <div class="pdf-obs-box">
+
+                        <p id="pdf_obs"></p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
