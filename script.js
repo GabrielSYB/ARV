@@ -310,27 +310,54 @@ async function generatePDF(){
       backgroundColor:'#ffffff'
     });
 
-  const img =
+  const imgData =
     canvas.toDataURL('image/png');
 
   const { jsPDF } = window.jspdf;
 
   const pdf =
-    new jsPDF('p', 'mm', 'a4');
+    new jsPDF('p','mm','a4');
 
-  const width = 210;
+  const pageWidth = 210;
+  const pageHeight = 297;
 
-  const height =
-    canvas.height * width / canvas.width;
+  const imgWidth = pageWidth;
+
+  const imgHeight =
+    canvas.height * imgWidth / canvas.width;
+
+  let heightLeft = imgHeight;
+
+  let position = 0;
 
   pdf.addImage(
-    img,
+    imgData,
     'PNG',
     0,
-    0,
-    width,
-    height
+    position,
+    imgWidth,
+    imgHeight
   );
+
+  heightLeft -= pageHeight;
+
+  while(heightLeft > 0){
+
+    position = heightLeft - imgHeight;
+
+    pdf.addPage();
+
+    pdf.addImage(
+      imgData,
+      'PNG',
+      0,
+      position,
+      imgWidth,
+      imgHeight
+    );
+
+    heightLeft -= pageHeight;
+  }
 
   const blob =
     pdf.output('blob');
